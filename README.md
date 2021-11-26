@@ -1,0 +1,2 @@
+# shub
+.sh hub
