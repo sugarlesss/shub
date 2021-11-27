@@ -5,3 +5,6 @@
 <div align="center">
     <img src="./avatar.svg" width="30%" height="30%" align="center">
 </div>
+
+---
+Copyright (C) 2020-2021 Sugarless <https://sugarless.cn>
