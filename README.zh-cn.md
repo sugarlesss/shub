@@ -10,5 +10,7 @@
     <img src="./sugarless.svg" width="30%" height="30%" align="center">
 </div>
 
+[![Stargazers over time](https://starchart.cc/sugarlesss/shub.svg)](https://starchart.cc/sugarlesss/shub)
+
 ---
 Copyright (C) 2020-2021 Sugarless <https://sugarless.cn>
