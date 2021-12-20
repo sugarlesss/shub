@@ -528,7 +528,7 @@ fioTest() {
             echo -e " ---------------------------------"
 
             while [ $DISK_COUNT -lt $DISK_RESULTS_NUM ]; do
-                if [ $DISK_COUNT -gt 0 ]; then printf "%-10s | %-20s | %-20s\n"; fi
+                if [ $DISK_COUNT -gt 0 ]; then printf " %-10s | %-20s | %-20s\n"; fi
                 printf " %-10s | %-11s %8s | %-11s %8s\n" "Block Size" "${BLOCK_SIZES[DISK_COUNT]}" "(IOPS)" "${BLOCK_SIZES[DISK_COUNT + 1]}" "(IOPS)"
                 printf " %-10s | %-11s %8s | %-11s %8s\n" "  ------" "---" "---- " "----" "---- "
                 printf " %-10s | %-11s %8s | %-11s %8s\n" "Read" "${DISK_RESULTS[DISK_COUNT * 6 + 1]}" "(${DISK_RESULTS[DISK_COUNT * 6 + 4]})" "${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 1]}" "(${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 4]})"
