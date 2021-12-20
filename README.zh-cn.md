@@ -15,7 +15,7 @@
 # 脚本索引
 
 * 服务器
-  * [SugarlessBench.sh](#SugarlessBench.sh)
+  * [SugarlessBench.sh](#SugarlessBench)
 
 ---
 
