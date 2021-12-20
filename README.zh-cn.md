@@ -46,7 +46,8 @@ wget -N --no-check-certificate https://raw.fastgit.org/sugarlesss/shub/main/Suga
 
 ```
 centos
-	7.2.1511 ~ 7.9.2009
+	[√] 7.2.1511 ~ 7.9.2009
+	[x] 6.9 更新 yum 时会遇到一些错误，待修复
 ```
 
 ---

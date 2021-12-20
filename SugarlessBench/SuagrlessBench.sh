@@ -825,47 +825,47 @@ Check_JSONQuery() {
             echo -e "${Msg_Warning}JSON Query Module not found, Installing ..."
             echo -e "${Msg_Info}Installing Dependency ..."
 
-            echo -e "\n${Msg_Info}yum install -y epel-release"
+            echo -e "${Msg_Info}yum install -y epel-release"
             yum install -y epel-release
 
-            echo -e "\n${Msg_Info}yum install -y jq"
+            echo -e "${Msg_Info}yum install -y jq"
             yum install -y jq
 
         elif [ "${Var_OSRelease}" = "ubuntu" ] || [ "${Var_OSRelease}" = "debian" ]; then
             echo -e "${Msg_Warning}JSON Query Module not found, Installing ..."
             echo -e "${Msg_Info}Installing Dependency ..."
 
-            echo -e "\n${Msg_Info}apt-get update"
+            echo -e "${Msg_Info}apt-get update"
             apt-get update
 
-            echo -e "\n${Msg_Info}apt-get install -y jq"
+            echo -e "${Msg_Info}apt-get install -y jq"
             apt-get install -y jq
 
         elif [ "${Var_OSRelease}" = "fedora" ]; then
             echo -e "${Msg_Warning}JSON Query Module not found, Installing ..."
             echo -e "${Msg_Info}Installing Dependency ..."
 
-            echo -e "\n${Msg_Info}dnf install -y jq"
+            echo -e "${Msg_Info}dnf install -y jq"
             dnf install -y jq
 
         elif [ "${Var_OSRelease}" = "alpinelinux" ]; then
             echo -e "${Msg_Warning}JSON Query Module not found, Installing ..."
             echo -e "${Msg_Info}Installing Dependency ..."
 
-            echo -e "\n${Msg_Info}apk update"
+            echo -e "${Msg_Info}apk update"
             apk update
 
-            echo -e "\n${Msg_Info}apk add jq"
+            echo -e "${Msg_Info}apk add jq"
             apk add jq
 
         else
             echo -e "${Msg_Warning}JSON Query Module not found, Installing ..."
             echo -e "${Msg_Info}Installing Dependency ..."
 
-            echo -e "\n${Msg_Info}apk update"
+            echo -e "${Msg_Info}apk update"
             apk update
 
-            echo -e "\n${Msg_Info}apk add wget unzip curl"
+            echo -e "${Msg_Info}apk add wget unzip curl"
             apk add wget unzip curl
 
             echo -e "${Msg_Info}Downloading Json Query Module ..."
