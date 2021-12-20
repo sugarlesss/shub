@@ -480,7 +480,7 @@ fioTest() {
 
         if [[ ! -z "$DD_FALLBACK" || ${#DISK_RESULTS[@]} -eq 0 ]]; then # fio download failed or test was killed or returned an error, run dd test instead
             if [ -z "$DD_FALLBACK" ]; then                              # print error notice if ended up here due to fio error
-                echo -e "fio disk speed tests failed. Run manually to determine cause.\nRunning dd test as fallback..."
+                echo -e " fio disk speed tests failed. Run manually to determine cause.\nRunning dd test as fallback..."
             fi
 
             dd_test
@@ -512,16 +512,16 @@ fioTest() {
             DISK_COUNT=0
 
             # print disk speed test results
-            echo -e "fio Disk Speed Tests (Mixed R/W 50/50):"
-            echo -e "---------------------------------"
+            echo -e " fio Disk Speed Tests (Mixed R/W 50/50):"
+            echo -e " ---------------------------------"
 
             while [ $DISK_COUNT -lt $DISK_RESULTS_NUM ]; do
                 if [ $DISK_COUNT -gt 0 ]; then printf "%-10s | %-20s | %-20s\n"; fi
-                printf "%-10s | %-11s %8s | %-11s %8s\n" "Block Size" "${BLOCK_SIZES[DISK_COUNT]}" "(IOPS)" "${BLOCK_SIZES[DISK_COUNT + 1]}" "(IOPS)"
-                printf "%-10s | %-11s %8s | %-11s %8s\n" "  ------" "---" "---- " "----" "---- "
-                printf "%-10s | %-11s %8s | %-11s %8s\n" "Read" "${DISK_RESULTS[DISK_COUNT * 6 + 1]}" "(${DISK_RESULTS[DISK_COUNT * 6 + 4]})" "${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 1]}" "(${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 4]})"
-                printf "%-10s | %-11s %8s | %-11s %8s\n" "Write" "${DISK_RESULTS[DISK_COUNT * 6 + 2]}" "(${DISK_RESULTS[DISK_COUNT * 6 + 5]})" "${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 2]}" "(${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 5]})"
-                printf "%-10s | %-11s %8s | %-11s %8s\n" "Total" "${DISK_RESULTS[DISK_COUNT * 6]}" "(${DISK_RESULTS[DISK_COUNT * 6 + 3]})" "${DISK_RESULTS[(DISK_COUNT + 1) * 6]}" "(${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 3]})"
+                printf " %-10s | %-11s %8s | %-11s %8s\n" "Block Size" "${BLOCK_SIZES[DISK_COUNT]}" "(IOPS)" "${BLOCK_SIZES[DISK_COUNT + 1]}" "(IOPS)"
+                printf " %-10s | %-11s %8s | %-11s %8s\n" "  ------" "---" "---- " "----" "---- "
+                printf " %-10s | %-11s %8s | %-11s %8s\n" "Read" "${DISK_RESULTS[DISK_COUNT * 6 + 1]}" "(${DISK_RESULTS[DISK_COUNT * 6 + 4]})" "${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 1]}" "(${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 4]})"
+                printf " %-10s | %-11s %8s | %-11s %8s\n" "Write" "${DISK_RESULTS[DISK_COUNT * 6 + 2]}" "(${DISK_RESULTS[DISK_COUNT * 6 + 5]})" "${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 2]}" "(${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 5]})"
+                printf " %-10s | %-11s %8s | %-11s %8s\n" "Total" "${DISK_RESULTS[DISK_COUNT * 6]}" "(${DISK_RESULTS[DISK_COUNT * 6 + 3]})" "${DISK_RESULTS[(DISK_COUNT + 1) * 6]}" "(${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 3]})"
                 DISK_COUNT=$(expr $DISK_COUNT + 2)
             done
         fi
