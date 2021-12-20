@@ -15,7 +15,7 @@
 # 脚本索引
 
 * 服务器
-  * [SugarlessBench.sh](#SugarlessBench)
+  * [SugarlessBench.sh](#SugarlessBenchsh)
 
 ---
 
@@ -48,8 +48,6 @@ wget -N --no-check-certificate https://raw.fastgit.org/sugarlesss/shub/main/Suga
 centos
 	7.2.1511 ~ 7.9.2009
 ```
-
-## 
 
 ---
 Copyright (C) 2020-2021 Sugarless <https://sugarless.cn>
