@@ -21,12 +21,60 @@
 
 # SugarlessBench.sh
 
-## 脚本说明：
+## 简介：
 
-* 硬件信息
-* 操作系统信息
-* fio 硬盘读写测试
-* IPv4 信息
+SugarlessBench 是一款针对 Linux 服务器设计的测试脚本。通过此一键脚本，可以查看硬件配置信息及其综合性能。
+
+SugarlessBench 目前涵盖了如下测试：
+
+- **服务器基础信息** ( CPU信息 / 内存信息 / Swap信息 / 磁盘空间信息 / 网络信息等)
+- **系统性能测试 ([ TODO ]CPU / [ TODO ]内存 / 磁盘)**
+
+预览：
+
+```
+ -------------------------------------------------------------- 
+ CPU Model               : AMD EPYC 7551 32-Core Processor
+ CPU Cores               : 2 Cores 1996.253 MHz x64
+ CPU Cache               : 512 KB 
+ CPU AES-NI              : ✔ Enabled
+ CPU VM-x/AMD-V          : ❌ Disabled
+
+ RAM                     : 350 MB / 979 MB (244 MB Buff)
+ SWAP                    : 1 MB / 8191 MB
+
+ Disk                    : 5.1 GB / 39.5 GB 
+
+ OS                      : CentOS 7.9.2009
+ OS Architecture         : x64
+ OS virtualization       : KVM
+ OS Kernel               : 4.14.129-bbrplus
+ TCP Congestion Control  : bbrplus
+
+ Uptime                  : 10 days 1 hour 37 min
+ Load Average            : 0.10, 0.09, 0.09
+ -------------------------------------------------------------- 
+ IPV4 - IP Address       : [KR] 193.x.x.103
+ IPV4 - ASN Info         : AS31898 (ORACLE-BMC-31898 - Oracle Corporation, US)
+ IPV4 - Region           : Republic of Korea Seoul 
+ -------------------------------------------------------------- 
+
+ fio Disk Speed Tests (Mixed R/W 50/50):
+ ---------------------------------
+ Block Size | 4k            (IOPS) | 64k           (IOPS)
+   ------   | ---            ----  | ----           ---- 
+ Read       | 6.40 MB/s     (1.6k) | 26.16 MB/s     (408)
+ Write      | 6.40 MB/s     (1.6k) | 26.61 MB/s     (415)
+ Total      | 12.81 MB/s    (3.2k) | 52.77 MB/s     (823)
+           |                      |                     
+ Block Size | 512k          (IOPS) | 1m            (IOPS)
+   ------   | ---            ----  | ----           ---- 
+ Read       | 24.62 MB/s      (48) | 24.02 MB/s      (23)
+ Write      | 25.98 MB/s      (50) | 26.51 MB/s      (25)
+ Total      | 50.61 MB/s      (98) | 50.53 MB/s      (48)
+```
+
+
 
 ## 下载 & 运行：
 
@@ -64,6 +112,15 @@ Debian
 Ubuntu
 	[√] 20.04.3 LTS
 ```
+
+### Oracle Cloud
+
+```
+CentOS
+	[√] 7.9.2009
+```
+
+
 
 ---
 Copyright (C) 2020-2021 Sugarless <https://sugarless.cn>
