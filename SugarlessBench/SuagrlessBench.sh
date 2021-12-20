@@ -29,7 +29,7 @@ Msg_Fail="${Red}[Failed] ${Suffix}"        #
 
 # 关于此脚本
 About() {
-    echo -e "
+ echo -e "
  ${Green} +---------------------------------------------------------------------------+ ${Suffix}
  ${Green} |${Suffix} ${Blue}SugarlessBench.sh${Suffix} ${Yellow}Version ${Script_Version}${Suffix}                                           ${Green}|${Suffix}
  ${Green} +---------------------------------------------------------------------------+ ${Suffix}
@@ -38,7 +38,8 @@ About() {
  ${Green} |${Suffix} ${Purple}Github      :${Suffix} ${SkyBlue}https://github.com/sugarlesss/shub${Suffix}                          ${Green}|${Suffix}
  ${Green} |${Suffix} ${Purple}Author      :${Suffix} ${SkyBlue}Sugarless${Suffix} ${Blue}<jaded@foxmail.com>${Suffix}                               ${Green}|${Suffix}
  ${Green} |${Suffix} ${Purple}Blog        :${Suffix} ${SkyBlue}https://sugarless.cn${Suffix}                                        ${Green}|${Suffix}
- ${Green} +---------------------------------------------------------------------------+${Suffix}"
+ ${Green} +---------------------------------------------------------------------------+${Suffix}
+ "
 }
 
 # 初始化
@@ -130,7 +131,7 @@ GetSystemInfo() {
     system_load=$(w | head -1 | awk -F'load average:' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//')
 
     # 获取操作系统信息
-    os_version=$(GetOperatingSystemInfo)
+    os_release=$(GetOperatingSystemInfo)
     # 操作系统架构
     # os_arch=$(uname -m)
     os_arch=$(GetArch)
@@ -292,7 +293,7 @@ ShowSystemInfo() {
     echo -e " Disk                    : ${SkyBlue}$disk_used_size GB / ${Yellow}$disk_total_size GB ${Suffix}" | tee -a $log
     echo -e ""
 
-    echo -e " OS                      : ${SkyBlue}$os_version${Suffix}" | tee -a $log
+    echo -e " OS Release              : ${SkyBlue}$os_release${Suffix}" | tee -a $log
     echo -e " OS Architecture         : ${SkyBlue}$os_arch${Suffix}" | tee -a $log
     echo -e " OS virtualization       : ${Yellow}$os_virt${Suffix}" | tee -a $log
     echo -e " OS Kernel               : ${SkyBlue}$os_kernel${Suffix}" | tee -a $log
@@ -528,7 +529,7 @@ fioTest() {
             echo -e " ---------------------------------"
 
             while [ $DISK_COUNT -lt $DISK_RESULTS_NUM ]; do
-                if [ $DISK_COUNT -gt 0 ]; then printf " %-10s | %-20s | %-20s\n"; fi
+                if [ $DISK_COUNT -gt 0 ]; then printf "%-10s | %-20s | %-20s\n"; fi
                 printf " %-10s | %-11s %8s | %-11s %8s\n" "Block Size" "${BLOCK_SIZES[DISK_COUNT]}" "(IOPS)" "${BLOCK_SIZES[DISK_COUNT + 1]}" "(IOPS)"
                 printf " %-10s | %-11s %8s | %-11s %8s\n" "  ------" "---" "---- " "----" "---- "
                 printf " %-10s | %-11s %8s | %-11s %8s\n" "Read" "${DISK_RESULTS[DISK_COUNT * 6 + 1]}" "(${DISK_RESULTS[DISK_COUNT * 6 + 4]})" "${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 1]}" "(${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 4]})"
