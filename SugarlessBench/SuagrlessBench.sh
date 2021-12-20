@@ -95,6 +95,7 @@ Complete(){
 
 # GetSystemInfo
 GetSystemInfo() {
+    
     # CPU 名字及其编号、标称主频
     cpu_model_name=$(awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//')
     # 该逻辑核所处 CPU 的物理核数
@@ -136,9 +137,12 @@ GetSystemInfo() {
 
     # 操作系统位数
     os_long_bit=$(getconf LONG_BIT)
+
     # 操作系统内核
     os_kernel=$(uname -r)
+
     # 虚拟化
+
     os_virt=$(GetVirt)
 
     # 硬盘 已使用容量 / 总容量
@@ -149,6 +153,7 @@ GetSystemInfo() {
 
     # TCP 拥塞控制算法
     tcp_congestion_control=$(sysctl net.ipv4.tcp_congestion_control | awk -F ' ' '{print $3}')
+    
 }
 
 # 系统虚拟化
@@ -156,24 +161,31 @@ GetVirt() {
     if hash ifconfig 2>/dev/null; then
         eth=$(ifconfig)
     fi
-
-    virtualx=$(dmesg) 2>/dev/null
-
+    
     if [ $(which dmidecode) ]; then
-        sys_manu=$(dmidecode -s system-manufacturer) 2>/dev/null
-        sys_product=$(dmidecode -s system-product-name) 2>/dev/null
-        sys_ver=$(dmidecode -s system-version) 2>/dev/null
+        # 在 oracle vps 非 root 账号测试时报
+        #   /sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+        #   /dev/mem: Permission denied
+        # 为了兼容性考虑, 在括号内加了 2>/dev/null
+        sys_manu=$(dmidecode -s system-manufacturer 2>/dev/null) 2>/dev/null
+        sys_product=$(dmidecode -s system-product-name 2>/dev/null) 2>/dev/null
+        sys_ver=$(dmidecode -s system-version 2>/dev/null) 2>/dev/null
     else
         sys_manu=""
         sys_product=""
         sys_ver=""
     fi
 
+    virtualx=$(dmesg 2>/dev/null) 2>/dev/null
     if grep docker /proc/1/cgroup -qa; then
         virtual="Docker"
     elif grep lxc /proc/1/cgroup -qa; then
         virtual="Lxc"
-    elif grep -qa container=lxc /proc/1/environ; then
+    
+    # 在 oracle vps 非 root 账号测试时报
+    #   grep: /proc/1/environ: Permission denied
+    # 为了兼容性考虑, 在末尾加了 2>/dev/null
+    elif grep -qa container=lxc /proc/1/environ 2>/dev/null; then
         virtual="Lxc"
     elif [[ -f /proc/user_beancounters ]]; then
         virtual="OpenVZ"
