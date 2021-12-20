@@ -40,7 +40,7 @@ SugarlessBench 目前涵盖了如下测试：
  CPU AES-NI              : ✔ Enabled
  CPU VM-x/AMD-V          : ❌ Disabled
 
- RAM                     : 350 MB / 979 MB (244 MB Buff)
+ RAM                     : 349 MB / 979 MB (244 MB Buff)
  SWAP                    : 1 MB / 8191 MB
 
  Disk                    : 5.1 GB / 39.5 GB 
@@ -51,10 +51,10 @@ SugarlessBench 目前涵盖了如下测试：
  OS Kernel               : 4.14.129-bbrplus
  TCP Congestion Control  : bbrplus
 
- Uptime                  : 10 days 1 hour 37 min
- Load Average            : 0.10, 0.09, 0.09
+ Uptime                  : 10 days 4 hour 58 min
+ Load Average            : 0.20, 0.14, 0.13
  -------------------------------------------------------------- 
- IPV4 - IP Address       : [KR] 193.x.x.103
+ IPV4 - IP Address       : [KR] 193.x.x.231
  IPV4 - ASN Info         : AS31898 (ORACLE-BMC-31898 - Oracle Corporation, US)
  IPV4 - Region           : Republic of Korea Seoul 
  -------------------------------------------------------------- 
@@ -63,15 +63,15 @@ SugarlessBench 目前涵盖了如下测试：
  ---------------------------------
  Block Size | 4k            (IOPS) | 64k           (IOPS)
    ------   | ---            ----  | ----           ---- 
- Read       | 6.40 MB/s     (1.6k) | 26.16 MB/s     (408)
- Write      | 6.40 MB/s     (1.6k) | 26.61 MB/s     (415)
- Total      | 12.81 MB/s    (3.2k) | 52.77 MB/s     (823)
-           |                      |                     
+ Read       | 6.30 MB/s     (1.5k) | 25.93 MB/s     (405)
+ Write      | 6.31 MB/s     (1.5k) | 26.38 MB/s     (412)
+ Total      | 12.61 MB/s    (3.1k) | 52.32 MB/s     (817)
+            |                      |                     
  Block Size | 512k          (IOPS) | 1m            (IOPS)
    ------   | ---            ----  | ----           ---- 
- Read       | 24.62 MB/s      (48) | 24.02 MB/s      (23)
- Write      | 25.98 MB/s      (50) | 26.51 MB/s      (25)
- Total      | 50.61 MB/s      (98) | 50.53 MB/s      (48)
+ Read       | 24.52 MB/s      (47) | 23.90 MB/s      (23)
+ Write      | 26.04 MB/s      (50) | 26.66 MB/s      (26)
+ Total      | 50.57 MB/s      (97) | 50.56 MB/s      (49)
 ```
 
 
