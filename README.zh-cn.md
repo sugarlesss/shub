@@ -80,12 +80,10 @@ SugarlessBench 目前涵盖了如下测试：
 
 ```bash
 # Github
-curl -fsSL https://raw.githubusercontent.com/sugarlesss/shub/main/SugarlessBench/SuagrlessBench.sh | bash -s fast
 wget -N --no-check-certificate https://raw.githubusercontent.com/sugarlesss/shub/main/SugarlessBench/SuagrlessBench.sh && chmod +x SuagrlessBench.sh && bash SuagrlessBench.sh fast
 
-# fastgit
-curl -fsSL https://raw.fastgit.org/sugarlesss/shub/main/SugarlessBench/SuagrlessBench.sh | bash -s fast
-wget -N --no-check-certificate https://raw.fastgit.org/sugarlesss/shub/main/SugarlessBench/SuagrlessBench.sh && chmod +x SuagrlessBench.sh && bash SuagrlessBench.sh fast
+# Gitee
+wget -N --no-check-certificate https://gitee.com/sugarlesss/shub/raw/main/SugarlessBench/SuagrlessBench.sh && chmod +x SuagrlessBench.sh && bash SuagrlessBench.sh fast
 ```
 
 ## 兼容性
