@@ -724,7 +724,9 @@ SystemInfo_GetOSRelease() {
         fi
         local Var_OSReleaseArch="$(arch)"
         LBench_Result_OSReleaseFullName="$Var_OSReleaseFullName $Var_OSReleaseVersion ($Var_OSReleaseArch)"
+
     elif [ -f "/etc/redhat-release" ]; then # RedHat
+        # CentOS 5.8 会进入此分支, 等待修复
         Var_OSRelease="rhel"
         local Var_OSReleaseFullName="$(cat /etc/os-release | awk -F '[= "]' '/PRETTY_NAME/{print $3,$4}')"
         if [ "$(rpm -qa | grep -o el6 | sort -u)" = "el6" ]; then
@@ -742,12 +744,14 @@ SystemInfo_GetOSRelease() {
         fi
         local Var_OSReleaseArch="$(arch)"
         LBench_Result_OSReleaseFullName="$Var_OSReleaseFullName $Var_OSReleaseVersion ($Var_OSReleaseArch)"
+
     elif [ -f "/etc/fedora-release" ]; then # Fedora
         Var_OSRelease="fedora"
         local Var_OSReleaseFullName="$(cat /etc/os-release | awk -F '[= "]' '/PRETTY_NAME/{print $3}')"
         local Var_OSReleaseVersion="$(cat /etc/fedora-release | awk '{print $3,$4,$5,$6,$7}')"
         local Var_OSReleaseArch="$(arch)"
         LBench_Result_OSReleaseFullName="$Var_OSReleaseFullName $Var_OSReleaseVersion ($Var_OSReleaseArch)"
+
     elif [ -f "/etc/lsb-release" ]; then # Ubuntu
         Var_OSRelease="ubuntu"
         local Var_OSReleaseFullName="$(cat /etc/os-release | awk -F '[= "]' '/NAME/{print $3}' | head -n1)"
@@ -755,6 +759,7 @@ SystemInfo_GetOSRelease() {
         local Var_OSReleaseArch="$(arch)"
         LBench_Result_OSReleaseFullName="$Var_OSReleaseFullName $Var_OSReleaseVersion ($Var_OSReleaseArch)"
         Var_OSReleaseVersion_Short="$(cat /etc/lsb-release | awk -F '[= "]' '/DISTRIB_RELEASE/{print $2}')"
+
     elif [ -f "/etc/debian_version" ]; then # Debian
         Var_OSRelease="debian"
         local Var_OSReleaseFullName="$(cat /etc/os-release | awk -F '[= "]' '/PRETTY_NAME/{print $3,$4}')"
@@ -783,15 +788,18 @@ SystemInfo_GetOSRelease() {
         fi
         local Var_OSReleaseArch="$(arch)"
         LBench_Result_OSReleaseFullName="$Var_OSReleaseFullName $Var_OSReleaseVersion ($Var_OSReleaseArch)"
+
     elif [ -f "/etc/alpine-release" ]; then # Alpine Linux
         Var_OSRelease="alpinelinux"
         local Var_OSReleaseFullName="$(cat /etc/os-release | awk -F '[= "]' '/NAME/{print $3,$4}' | head -n1)"
         local Var_OSReleaseVersion="$(cat /etc/alpine-release | awk '{print $1}')"
         local Var_OSReleaseArch="$(arch)"
         LBench_Result_OSReleaseFullName="$Var_OSReleaseFullName $Var_OSReleaseVersion ($Var_OSReleaseArch)"
+
     else
         Var_OSRelease="unknown" # 未知系统分支
         LBench_Result_OSReleaseFullName="[Error: Unknown Linux Branch !]"
+
     fi
 }
 SystemInfo_GetSystemBit() {
