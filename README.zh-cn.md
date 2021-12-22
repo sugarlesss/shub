@@ -75,7 +75,6 @@ SugarlessBench 目前涵盖了如下测试：
 ```
 
 
-
 ## 下载 & 运行：
 
 ```bash
@@ -86,23 +85,14 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/sugarlesss/shub
 wget -N --no-check-certificate https://gitee.com/sugarlesss/shub/raw/main/SugarlessBench/SugarlessBench.sh && chmod +x SugarlessBench.sh && bash SugarlessBench.sh fast
 ```
 
-## 兼容性
+## 已测试通过的镜像
 
-### 阿里云镜像
+### 阿里云
 
 ```
 centos
 	[√] 8.5.2111
 	[√] 7.2.1511 ~ 7.9.2009
-	[x] 6.10 / 6.9
-		* yum update 时会因为系统源的问题遇到一些错误，可自行 baidu/google 解决
-			* http://mirrors.aliyun.com/centos/6/os/x86_64/repodata/repomd.xml: [Errno 14] PYCURL ERROR 22 - "The requested URL returned error: 404 Not Found" Trying other mirror.
-	[x] 5.8
-		* yum update 时会因为系统源的问题遇到一些错误，可自行 baidu/google 解决
-			* http://mirrors.aliyun.com/centos/6/os/x86_64/repodata/repomd.xml: [Errno 14] PYCURL ERROR 22 - "The requested URL returned error: 404 Not Found" Trying other mirror.
-		* curl/wget 下载脚本文件时, 会因为 SSL 协议的问题下载失败, 可手动上传脚本文件至服务器
-			* curl: (35) error:1407742E:SSL routines:SSL23_GET_SERVER_HELLO:tlsv1 alert protocol version
-			* OpenSSL: error:1407742E:SSL routines:SSL23_GET_SERVER_HELLO:tlsv1 alert protocol version. Unable to establish SSL connection.
 
 Debian
 	[√] 9.9
