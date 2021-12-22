@@ -1,37 +1,38 @@
 #!/usr/bin/env bash
 
-# 全局常量 =======================================================================================================================#
-Script_Version="0.1.0"                                                                                                            #
-UA_Browser="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36"  #
-UA_Dalvik="Dalvik/2.1.0 (Linux; U; Android 9; ALP-AL00 Build/HUAWEIALP-AL00)"                                                    #
-# 全局常量========================================================================================================================#
+# 全局常量
+ROOT_PATH=""
+SCRIPT_VERSION="0.1.0"
+UA_LemonBench="LemonBench/20201005 Intl BetaVersion"
 
-# 字体颜色 ========# 
-Black="\033[30m"   #
-Red="\033[31m"     #
-Green="\033[32m"   #
-Yellow="\033[33m"  #
-Blue="\033[34m"    #
-Purple="\033[35m"  #
-SkyBlue="\033[36m" #
-White="\033[37m"   #
-Suffix="\033[0m"   #
-# 字体颜色=========#
+USERAGENT_BROWSER="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36"
+USERAGENT_DALVIK="Dalvik/2.1.0 (Linux; U; Android 9; ALP-AL00 Build/HUAWEIALP-AL00)"
 
-# 消息提示定义 =============================#
-Msg_Info="${Blue}[Info] ${Suffix}"         #
-Msg_Warning="${Yellow}[Warning] ${Suffix}" #
-Msg_Debug="${Yellow}[Debug] ${Suffix}"     #
-Msg_Error="${Red}[Error] ${Suffix}"        #
-Msg_Success="${Green}[Success] ${Suffix}"  #
-Msg_Fail="${Red}[Failed] ${Suffix}"        #
-# 消息提示定义 =============================#
+# 字体颜色
+Black="\033[30m"
+Red="\033[31m"
+Green="\033[32m"
+Yellow="\033[33m"
+Blue="\033[34m"
+Purple="\033[35m"
+SkyBlue="\033[36m"
+White="\033[37m"
+Suffix="\033[0m"
+
+# 消息提示定义
+Msg_Info="${Blue}[Info] ${Suffix}"
+Msg_Warning="${Yellow}[Warning] ${Suffix}"
+Msg_Debug="${Yellow}[Debug] ${Suffix}"
+Msg_Error="${Red}[Error] ${Suffix}"
+Msg_Success="${Green}[Success] ${Suffix}"
+Msg_Fail="${Red}[Failed] ${Suffix}"
+
 
 # 关于此脚本
 About() {
  echo -e "
  ${Green} +---------------------------------------------------------------------------+ ${Suffix}
- ${Green} |${Suffix} ${Blue}SugarlessBench.sh${Suffix} ${Yellow}Version ${Script_Version}${Suffix}                                           ${Green}|${Suffix}
+ ${Green} |${Suffix} ${Blue}SugarlessBench.sh${Suffix} ${Yellow}Version ${SCRIPT_VERSION}${Suffix}                                           ${Green}|${Suffix}
  ${Green} +---------------------------------------------------------------------------+ ${Suffix}
  ${Green} |${Suffix} ${Purple}Description :${Suffix} ${Yellow}Basic system info & I/O test & Speedtest${Suffix}                    ${Green}|${Suffix}
  ${Green} |${Suffix} ${Purple}Intro       :${Suffix} ${SkyBlue}https://sugarless.cn/posts/linux-script/sugarlessbench.html${Suffix} ${Green}|${Suffix}
@@ -149,8 +150,8 @@ GetSystemInfo() {
     # 硬盘 已使用容量 / 总容量
     disk_size1=$(LANG=C df -hPl | grep -wvE '\-|none|tmpfs|overlay|shm|udev|devtmpfs|by-uuid|chroot|Filesystem' | awk '{print $2}')
     disk_size2=$(LANG=C df -hPl | grep -wvE '\-|none|tmpfs|overlay|shm|udev|devtmpfs|by-uuid|chroot|Filesystem' | awk '{print $3}')
-    disk_total_size=$(calc_disk ${disk_size1[@]})
-    disk_used_size=$(calc_disk ${disk_size2[@]})
+    disk_total_size=$(calc_disk "${disk_size1[@]}")
+    disk_used_size=$(calc_disk "${disk_size2[@]}")
 
     # TCP 拥塞控制算法
     tcp_congestion_control=$(sysctl net.ipv4.tcp_congestion_control | awk -F ' ' '{print $3}')
@@ -269,7 +270,7 @@ GetOperatingSystemInfo() {
 calc_disk() {
     local total_size=0
     local array=$@
-    for size in ${array[@]}; do
+    for size in "${array[@]}"; do
         [ "${size}" == "0" ] && size_tmp=0 || size_tmp=$(echo ${size:0:${#size}-1})
         [ "$(echo ${size:(-1)})" == "K" ] && size=0
         [ "$(echo ${size:(-1)})" == "M" ] && size=$(awk 'BEGIN{printf "%.1f", '$size_tmp' / 1024}')
@@ -334,6 +335,28 @@ GetNetworkInfo() {
     # https://ip-api.com/
     local Result_IPV4="$(curl --user-agent "${UA_LemonBench}" --connect-timeout 10 -fsL4 https://lemonbench-api.ilemonrain.com/ipapi/ipapi.php)"
     local Result_IPV6="$(curl --user-agent "${UA_LemonBench}" --connect-timeout 10 -fsL6 https://lemonbench-api.ilemonrain.com/ipapi/ipapi.php)"
+
+    # {
+    #     "ret": 200,
+    #     "msg": "Success",
+    #     "data": {
+    #         "ip": "192.x.x.100",
+    #         "country": "Russian Federation",
+    #         "province": "Russian Federation",
+    #         "city": "",
+    #         "isp": "justhost.ru",
+    #         "owner": "",
+    #         "country_code": "RU",
+    #         "asn": {
+    #         "registry": "ripencc",
+    #         "number": 51235,
+    #         "name": "ASBAXET",
+    #         "desc": "ASBAXET - LLC Baxet, RU",
+    #         "route": "1100:1100::/48"
+    #         }
+    #     }
+    # }
+
     if [ "${Result_IPV4}" != "" ] && [ "${Result_IPV6}" = "" ]; then
         LBench_Result_NetworkStat="ipv4only"
     elif [ "${Result_IPV4}" = "" ] && [ "${Result_IPV6}" != "" ]; then
