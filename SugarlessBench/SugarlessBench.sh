@@ -408,16 +408,16 @@ ShowNetworkInfo() {
             echo -e " IPV4 - ASN Info         : ${SkyBlue}AS${IPAPI_IPV4_asn} (${IPAPI_IPV4_organization})${Suffix}"
             echo -e " IPV4 - Region           : ${SkyBlue}${IPAPI_IPV4_location}${Suffix}"
         else
-            echo -e " IPV6 - IP Address       : ${Red}Error: API Query Failed${Suffix}"
+            echo -e " IPV4 - IP Address       : ${Red}Error: API Query Failed${Suffix}"
         fi
     fi
     if [ "${LBench_Result_NetworkStat}" = "ipv6only" ] || [ "${LBench_Result_NetworkStat}" = "dualstack" ]; then
         if [ "${IPAPI_IPV6_ip}" != "" ]; then
-            echo -e " IPV6 - IP Address      :${SkyBlue}[${IPAPI_IPV6_country_code}] ${IPAPI_IPV6_ip}${Suffix}"
-            echo -e " IPV6 - ASN Info        :${SkyBlue}AS${IPAPI_IPV6_asn} (${IPAPI_IPV6_organization})${Suffix}"
-            echo -e " IPV6 - Region          :${SkyBlue}${IPAPI_IPV6_location}${Suffix}"
+            echo -e " IPV6 - IP Address       : ${SkyBlue}[${IPAPI_IPV6_country_code}] ${IPAPI_IPV6_ip}${Suffix}"
+            echo -e " IPV6 - ASN Info         : ${SkyBlue}AS${IPAPI_IPV6_asn} (${IPAPI_IPV6_organization})${Suffix}"
+            echo -e " IPV6 - Region           : ${SkyBlue}${IPAPI_IPV6_location}${Suffix}"
         else
-            echo -e " IPV6 - IP Address      :${Red}Error: API Query Failed${Suffix}"
+            echo -e " IPV6 - IP Address       : ${Red}Error: API Query Failed${Suffix}"
         fi
     fi
 
@@ -449,7 +449,7 @@ fioTest() {
 
             long=""
             m=-1
-            for x in ${poss[@]}; do
+            for x in "${poss[@]}"; do
                 if [ ${#x} -gt $m ]; then
                     m=${#x}
                     long=$x
