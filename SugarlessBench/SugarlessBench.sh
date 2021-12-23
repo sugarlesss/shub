@@ -283,7 +283,7 @@ calc_disk() {
 
 # System info
 ShowSystemInfo() {
-    echo -e "CPU / RAM / DISK / OS / TCP"
+    echo -e " CPU / RAM / DISK / OS / TCP"
     echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
 
     echo -e " CPU Model               : ${SkyBlue}$cpu_model_name${Suffix}" | tee -a $log
@@ -304,11 +304,12 @@ ShowSystemInfo() {
     echo -e " OS Architecture         : ${SkyBlue}$os_arch${Suffix}" | tee -a $log
     echo -e " OS virtualization       : ${Yellow}$os_virt${Suffix}" | tee -a $log
     echo -e " OS Kernel               : ${SkyBlue}$os_kernel${Suffix}" | tee -a $log
-    echo -e " TCP Congestion Control  : ${Yellow}$tcp_congestion_control${Suffix}" | tee -a $log
+#    echo -e " Uptime                  : ${SkyBlue}$system_uptime${Suffix}" | tee -a $log
+#    echo -e " Load Average            : ${SkyBlue}$system_load${Suffix}" | tee -a $log
     echo -e ""
 
-    echo -e " Uptime                  : ${SkyBlue}$system_uptime${Suffix}" | tee -a $log
-    echo -e " Load Average            : ${SkyBlue}$system_load${Suffix}" | tee -a $log
+    echo -e " TCP Congestion Control  : ${Yellow}$tcp_congestion_control${Suffix}" | tee -a $log
+    echo -e ""
 
     echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
 }
