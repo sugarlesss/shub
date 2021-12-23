@@ -310,8 +310,6 @@ ShowSystemInfo() {
 
     echo -e " TCP Congestion Control  : ${Yellow}$tcp_congestion_control${Suffix}" | tee -a $log
     echo -e ""
-
-    echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
 }
 
 # 新版JSON解析
@@ -404,6 +402,9 @@ GetNetworkInfo() {
 
 # 输出网络信息
 ShowNetworkInfo() {
+    echo -e " Network"
+    echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
+
     if [ "${LBench_Result_NetworkStat}" = "ipv4only" ] || [ "${LBench_Result_NetworkStat}" = "dualstack" ]; then
         if [ "${IPAPI_IPV4_ip}" != "" ]; then
             echo -e " IPV4 - IP Address       : ${SkyBlue}[${IPAPI_IPV4_country_code}] ${IPAPI_IPV4_ip}${Suffix}"
@@ -423,7 +424,7 @@ ShowNetworkInfo() {
         fi
     fi
 
-    echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
+    echo -e ""
 }
 
 fioTest() {
