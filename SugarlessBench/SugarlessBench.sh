@@ -283,7 +283,7 @@ calc_disk() {
 
 # System info
 ShowSystemInfo() {
-    echo -e "Hardware and Operating System"
+    echo -e "CPU / RAM / DISK / OS / TCP"
     echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
 
     echo -e " CPU Model               : ${SkyBlue}$cpu_model_name${Suffix}" | tee -a $log
