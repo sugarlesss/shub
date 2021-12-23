@@ -79,10 +79,12 @@ SugarlessBench 目前涵盖了如下测试：
 
 ```bash
 # Github
-wget -N --no-check-certificate https://raw.githubusercontent.com/sugarlesss/shub/main/SugarlessBench/SugarlessBench.sh && chmod +x SugarlessBench.sh && bash SugarlessBench.sh fast
+curl -fsSL https://raw.githubusercontent.com/sugarlesss/shub/main/SugarlessBench/SugarlessBench.sh | bash -s fast
+wget -qO- https://raw.githubusercontent.com/sugarlesss/shub/main/SugarlessBench/SugarlessBench.sh | bash -s fast
 
 # Gitee
-wget -N --no-check-certificate https://gitee.com/sugarlesss/shub/raw/main/SugarlessBench/SugarlessBench.sh && chmod +x SugarlessBench.sh && bash SugarlessBench.sh fast
+curl -fsSL https://gitee.com/sugarlesss/shub/raw/main/SugarlessBench/SugarlessBench.sh | bash -s fast
+wget -qO- https://gitee.com/sugarlesss/shub/raw/main/SugarlessBench/SugarlessBench.sh | bash -s fast
 ```
 
 ## 已测试通过的镜像

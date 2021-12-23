@@ -283,7 +283,7 @@ calc_disk() {
 
 # System info
 ShowSystemInfo() {
-    echo -e " CPU / RAM / DISK / OS / TCP"
+    echo -e "${Green} CPU / RAM / DISK / OS / TCP ${Suffix}"
     echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
 
     echo -e " CPU Model               : ${SkyBlue}$cpu_model_name${Suffix}" | tee -a $log
@@ -402,7 +402,7 @@ GetNetworkInfo() {
 
 # 输出网络信息
 ShowNetworkInfo() {
-    echo -e " Network"
+    echo -e "${Green} Network ${Suffix}"
     echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
 
     if [ "${LBench_Result_NetworkStat}" = "ipv4only" ] || [ "${LBench_Result_NetworkStat}" = "dualstack" ]; then
