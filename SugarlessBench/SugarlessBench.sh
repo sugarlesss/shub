@@ -97,7 +97,6 @@ Complete(){
 
 # GetSystemInfo
 GetSystemInfo() {
-    
     # CPU 名字及其编号、标称主频
     cpu_model_name=$(awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//')
     # 该逻辑核所处 CPU 的物理核数
@@ -283,7 +282,7 @@ calc_disk() {
 
 # System info
 ShowSystemInfo() {
-    echo -e "${Green} CPU / RAM / DISK / OS / TCP ${Suffix}"
+    echo -e "${SkyBlue} CPU / RAM / DISK / OS / TCP ${Suffix}"
     echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
 
     echo -e " CPU Model               : ${SkyBlue}$cpu_model_name${Suffix}" | tee -a $log
@@ -309,6 +308,7 @@ ShowSystemInfo() {
     echo -e ""
 
     echo -e " TCP Congestion Control  : ${Yellow}$tcp_congestion_control${Suffix}" | tee -a $log
+    echo -e ""
     echo -e ""
 }
 
@@ -402,7 +402,7 @@ GetNetworkInfo() {
 
 # 输出网络信息
 ShowNetworkInfo() {
-    echo -e "${Green} Network ${Suffix}"
+    echo -e "${SkyBlue} Network ${Suffix}"
     echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
 
     if [ "${LBench_Result_NetworkStat}" = "ipv4only" ] || [ "${LBench_Result_NetworkStat}" = "dualstack" ]; then
@@ -556,7 +556,7 @@ fioTest() {
             DISK_COUNT=0
 
             # print disk speed test results
-            echo -e " fio Disk Speed Tests (Mixed R/W 50/50):"
+            echo -e "${SkyBlue} fio Disk Speed Tests (Mixed R/W 50/50): ${Suffix}"
             echo -e " ---------------------------------"
 
             while [ $DISK_COUNT -lt $DISK_RESULTS_NUM ]; do
