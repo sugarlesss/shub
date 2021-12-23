@@ -546,7 +546,7 @@ fioTest() {
             # print dd sequential disk speed test results
             echo -e
             echo -e "dd Sequential Disk Speed Tests:"
-            echo -e "---------------------------------"
+            echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
             printf "%-6s | %-6s %-4s | %-6s %-4s | %-6s %-4s | %-6s %-4s\n" "" "Test 1" "" "Test 2" "" "Test 3" "" "Avg" ""
             printf "%-6s | %-6s %-4s | %-6s %-4s | %-6s %-4s | %-6s %-4s\n"
             printf "%-6s | %-11s | %-11s | %-11s | %-6.2f %-4s\n" "Write" "${DISK_WRITE_TEST_RES[0]}" "${DISK_WRITE_TEST_RES[1]}" "${DISK_WRITE_TEST_RES[2]}" "${DISK_WRITE_TEST_AVG}" "${DISK_WRITE_TEST_UNIT}"
@@ -557,10 +557,10 @@ fioTest() {
 
             # print disk speed test results
             echo -e "${SkyBlue} fio Disk Speed Tests (Mixed R/W 50/50): ${Suffix}"
-            echo -e " ---------------------------------"
+            echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
 
             while [ $DISK_COUNT -lt $DISK_RESULTS_NUM ]; do
-                if [ $DISK_COUNT -gt 0 ]; then printf "%-10s | %-20s | %-20s\n"; fi
+                if [ $DISK_COUNT -gt 0 ]; then printf "% -10s | %-20s | %-20s\n"; fi
                 printf " %-10s | %-11s %8s | %-11s %8s\n" "Block Size" "${BLOCK_SIZES[DISK_COUNT]}" "(IOPS)" "${BLOCK_SIZES[DISK_COUNT + 1]}" "(IOPS)"
                 printf " %-10s | %-11s %8s | %-11s %8s\n" "  ------" "---" "---- " "----" "---- "
                 printf " %-10s | %-11s %8s | %-11s %8s\n" "Read" "${DISK_RESULTS[DISK_COUNT * 6 + 1]}" "(${DISK_RESULTS[DISK_COUNT * 6 + 4]})" "${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 1]}" "(${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 4]})"
