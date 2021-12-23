@@ -282,7 +282,7 @@ calc_disk() {
 
 # System info
 ShowSystemInfo() {
-    echo -e "${SkyBlue} CPU / RAM / DISK / OS / TCP ${Suffix}"
+    echo -e "${SkyBlue} CPU / RAM / Disk / OS / TCP ${Suffix}"
     echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
 
     echo -e " CPU Model               : ${SkyBlue}$cpu_model_name${Suffix}" | tee -a $log
@@ -402,25 +402,25 @@ GetNetworkInfo() {
 
 # 输出网络信息
 ShowNetworkInfo() {
-    echo -e "${SkyBlue} Network ${Suffix}"
+    echo -e "${SkyBlue} IPv4 / IPv6 / Region / ASN ${Suffix}"
     echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
 
     if [ "${LBench_Result_NetworkStat}" = "ipv4only" ] || [ "${LBench_Result_NetworkStat}" = "dualstack" ]; then
         if [ "${IPAPI_IPV4_ip}" != "" ]; then
-            echo -e " IPV4 - IP Address       : ${SkyBlue}[${IPAPI_IPV4_country_code}] ${IPAPI_IPV4_ip}${Suffix}"
-            echo -e " IPV4 - ASN Info         : ${SkyBlue}AS${IPAPI_IPV4_asn} (${IPAPI_IPV4_organization})${Suffix}"
-            echo -e " IPV4 - Region           : ${SkyBlue}${IPAPI_IPV4_location}${Suffix}"
+            echo -e " IPv4 - IP Address       : ${SkyBlue}[${IPAPI_IPV4_country_code}] ${IPAPI_IPV4_ip}${Suffix}"
+            echo -e " IPv4 - ASN Info         : ${SkyBlue}AS${IPAPI_IPV4_asn} (${IPAPI_IPV4_organization})${Suffix}"
+            echo -e " IPv4 - Region           : ${SkyBlue}${IPAPI_IPV4_location}${Suffix}"
         else
-            echo -e " IPV4 - IP Address       : ${Red}Error: API Query Failed${Suffix}"
+            echo -e " IPv4 - IP Address       : ${Red}Error: API Query Failed${Suffix}"
         fi
     fi
     if [ "${LBench_Result_NetworkStat}" = "ipv6only" ] || [ "${LBench_Result_NetworkStat}" = "dualstack" ]; then
         if [ "${IPAPI_IPV6_ip}" != "" ]; then
-            echo -e " IPV6 - IP Address       : ${SkyBlue}[${IPAPI_IPV6_country_code}] ${IPAPI_IPV6_ip}${Suffix}"
-            echo -e " IPV6 - ASN Info         : ${SkyBlue}AS${IPAPI_IPV6_asn} (${IPAPI_IPV6_organization})${Suffix}"
-            echo -e " IPV6 - Region           : ${SkyBlue}${IPAPI_IPV6_location}${Suffix}"
+            echo -e " IPv6 - IP Address       : ${SkyBlue}[${IPAPI_IPV6_country_code}] ${IPAPI_IPV6_ip}${Suffix}"
+            echo -e " IPv6 - ASN Info         : ${SkyBlue}AS${IPAPI_IPV6_asn} (${IPAPI_IPV6_organization})${Suffix}"
+            echo -e " IPv6 - Region           : ${SkyBlue}${IPAPI_IPV6_location}${Suffix}"
         else
-            echo -e " IPV6 - IP Address       : ${Red}Error: API Query Failed${Suffix}"
+            echo -e " IPv6 - IP Address       : ${Red}Error: API Query Failed${Suffix}"
         fi
     fi
 
@@ -594,7 +594,7 @@ disk_test() {
 
     for BS in "${BLOCK_SIZES[@]}"; do
         # run rand read/write mixed fio test with block size = $BS
-        echo -en "Running fio random mixed R+W disk test with $BS block size..."
+        echo -en "${Msg_Info} Running fio random mixed R+W disk test with $BS block size..."
         DISK_TEST=$(timeout 35 $FIO_CMD --name=rand_rw_$BS --ioengine=libaio --rw=randrw --rwmixread=50 --bs=$BS --iodepth=64 --numjobs=2 --size=$FIO_SIZE --runtime=30 --gtod_reduce=1 --direct=1 --filename=$DISK_PATH/test.fio --group_reporting --minimal 2>/dev/null | grep rand_rw_$BS)
         DISK_IOPS_R=$(echo $DISK_TEST | awk -F';' '{print $8}')
         DISK_IOPS_W=$(echo $DISK_TEST | awk -F';' '{print $49}')
