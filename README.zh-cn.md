@@ -33,45 +33,50 @@ SugarlessBench 目前涵盖了如下测试：
 预览：
 
 ```
+ CPU / RAM / Disk / OS / TCP 
  -------------------------------------------------------------- 
- CPU Model               : AMD EPYC 7551 32-Core Processor
- CPU Cores               : 2 Cores 1996.253 MHz x64
+ CPU Model               : AMD EPYC 7402P 24-Core Processor
+ CPU Cores               : 1 Cores 2794.750 MHz x64
  CPU Cache               : 512 KB 
  CPU AES-NI              : ✔ Enabled
- CPU VM-x/AMD-V          : ❌ Disabled
+ CPU VM-x/AMD-V          : ✔ Enabled
 
- RAM                     : 349 MB / 979 MB (244 MB Buff)
- SWAP                    : 1 MB / 8191 MB
+ RAM                     : 407 MB / 989 MB (132 MB Buff)
+ SWAP                    : 29 MB / 1024 MB
 
- Disk                    : 5.1 GB / 39.5 GB 
+ Disk                    : 5.9 GB / 9.9 GB 
 
- OS                      : CentOS 7.9.2009
+ OS Release              : CentOS 7.9.2009
  OS Architecture         : x64
  OS virtualization       : KVM
- OS Kernel               : 4.14.129-bbrplus
- TCP Congestion Control  : bbrplus
+ OS Kernel               : 4.9.215-36.el7.x86_64
 
- Uptime                  : 10 days 4 hour 58 min
- Load Average            : 0.20, 0.14, 0.13
- -------------------------------------------------------------- 
- IPV4 - IP Address       : [KR] 193.x.x.231
- IPV4 - ASN Info         : AS31898 (ORACLE-BMC-31898 - Oracle Corporation, US)
- IPV4 - Region           : Republic of Korea Seoul 
- -------------------------------------------------------------- 
+ TCP Congestion Control  : bbr
 
- fio Disk Speed Tests (Mixed R/W 50/50):
- ---------------------------------
+
+ IPv4 / IPv6 / Region / ASN 
+ -------------------------------------------------------------- 
+ IPv4 - IP Address       : [US] 192.168.3.10
+ IPv4 - ASN Info         : AS1234 (xxxxxxxxxxx)
+ IPv4 - Region           : United States California Los Angeles
+ IPv6 - IP Address       : [US] 1234:1234:1234:123::
+ IPv6 - ASN Info         : AS1234 (xxxxxxxxxxx)
+ IPv6 - Region           : United States United States 
+
+
+ fio Disk Speed Tests (Mixed R/W 50/50): 
+ -------------------------------------------------------------- 
  Block Size | 4k            (IOPS) | 64k           (IOPS)
    ------   | ---            ----  | ----           ---- 
- Read       | 6.30 MB/s     (1.5k) | 25.93 MB/s     (405)
- Write      | 6.31 MB/s     (1.5k) | 26.38 MB/s     (412)
- Total      | 12.61 MB/s    (3.1k) | 52.32 MB/s     (817)
+ Read       | 10.97 MB/s    (2.7k) | 162.14 MB/s   (2.5k)
+ Write      | 10.99 MB/s    (2.7k) | 162.99 MB/s   (2.5k)
+ Total      | 21.97 MB/s    (5.4k) | 325.13 MB/s   (5.0k)
             |                      |                     
  Block Size | 512k          (IOPS) | 1m            (IOPS)
    ------   | ---            ----  | ----           ---- 
- Read       | 24.52 MB/s      (47) | 23.90 MB/s      (23)
- Write      | 26.04 MB/s      (50) | 26.66 MB/s      (26)
- Total      | 50.57 MB/s      (97) | 50.56 MB/s      (49)
+ Read       | 640.00 MB/s   (1.2k) | 789.10 MB/s    (770)
+ Write      | 674.00 MB/s   (1.3k) | 841.65 MB/s    (821)
+ Total      | 1.31 GB/s     (2.5k) | 1.63 GB/s     (1.5k)
 ```
 
 
