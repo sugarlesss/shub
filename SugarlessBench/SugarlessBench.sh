@@ -262,15 +262,18 @@ GetOSRelease() {
 #    [ -f /etc/redhat-release ] && awk '{print ($1,$3~/^[0-9]/?$3:$4)}' /etc/redhat-release && return
 #    [ -f /etc/os-release ] && awk -F'[= "]' '/PRETTY_NAME/{print $3,$4,$5}' /etc/os-release && return
 #    [ -f /etc/lsb-release ] && awk -F'[="]+' '/DESCRIPTION/{print $2}' /etc/lsb-release && return
+
+    local release="unknown"
+
     if [ -f /etc/redhat-release ]; then
-        os_release=$(cat /etc/redhat-release | awk '{print ($1,$3~/^[0-9]/?$3:$4)}' /etc/redhat-release)
+        release=$(cat /etc/redhat-release | awk '{print ($1,$3~/^[0-9]/?$3:$4)}' /etc/redhat-release)
     elif [ -f /etc/os-release ]; then
-        os_release=$(cat /etc/os-release | awk -F'[= "]' '/PRETTY_NAME/{print $3,$4,$5}' /etc/os-release)
+        release=$(cat /etc/os-release | awk -F'[= "]' '/PRETTY_NAME/{print $3,$4,$5}' /etc/os-release)
     elif [ -f /etc/lsb-release ]; then
-        os_release=$(cat /etc/lsb-release | awk -F'[="]+' '/DESCRIPTION/{print $2}' /etc/lsb-release)
-    else
-        os_release="unknown"
+        release=$(cat /etc/lsb-release | awk -F'[="]+' '/DESCRIPTION/{print $2}' /etc/lsb-release)
     fi
+
+    echo "${release}"
 }
 
 # 将硬盘空间单位转换为 G, 并累加起来
