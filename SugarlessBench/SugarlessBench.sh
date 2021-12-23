@@ -27,6 +27,10 @@ Msg_Error="${Red}[Error] ${Suffix}"
 Msg_Success="${Green}[Success] ${Suffix}"
 Msg_Fail="${Red}[Failed] ${Suffix}"
 
+# 全局变量
+Var_OSRelease=""  # centos / debian / ubuntu ...
+Var_OSVersion=""  # 5 6 7 8 ... 主版本号
+Var_OSArch=""     # 32 / 64 位
 
 # 关于此脚本
 About() {
@@ -45,7 +49,7 @@ About() {
 
 # 初始化
 Init() {
-    # 在运行脚本的同一位置创建一个目录, 以临时存放有关的文件
+    # 在运行脚本的同一位置创建一个临时目录存放有关的文件
     DATE=$(date -Iseconds | sed -e "s/:/_/g")
     ROOT_PATH=./$DATE
     mkdir -p $ROOT_PATH
@@ -90,7 +94,7 @@ Clean() {
 Complete(){
     echo -e
     Clean
-    echo -e "\n${Msg_Success}Test complete\n"
+    echo -e "${Msg_Success}Test complete"
     exit 0
 }
 
@@ -131,7 +135,7 @@ GetSystemInfo() {
     system_load=$(w | head -1 | awk -F'load average:' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//')
 
     # 获取操作系统信息
-    os_release=$(GetOperatingSystemInfo)
+    os_release=$(GetOSRelease)
     # 操作系统架构
     # os_arch=$(uname -m)
     os_arch=$(GetArch)
@@ -154,7 +158,7 @@ GetSystemInfo() {
 
     # TCP 拥塞控制算法
     tcp_congestion_control=$(sysctl net.ipv4.tcp_congestion_control | awk -F ' ' '{print $3}')
-    
+
 }
 
 # 系统虚拟化
@@ -162,7 +166,7 @@ GetVirt() {
     if hash ifconfig 2>/dev/null; then
         eth=$(ifconfig)
     fi
-    
+
     if [ $(which dmidecode) ]; then
         # 在 oracle vps 非 root 账号测试时报
         #   /sys/firmware/dmi/tables/smbios_entry_point: Permission denied
@@ -182,7 +186,7 @@ GetVirt() {
         virtual="Docker"
     elif grep lxc /proc/1/cgroup -qa; then
         virtual="Lxc"
-    
+
     # 在 oracle vps 非 root 账号测试时报
     #   grep: /proc/1/environ: Permission denied
     # 为了兼容性考虑, 在末尾加了 2>/dev/null
@@ -253,16 +257,20 @@ GetArch(){
     echo ${ARCH}
 }
 
-# 操作系统信息
-GetOperatingSystemInfo() {
-    [ -f /etc/redhat-release ] && awk '{print ($1,$3~/^[0-9]/?$3:$4)}' /etc/redhat-release && return
-    # cat /etc/redhat-release | awk '{print ($1,$3~/^[0-9]/?$3:$4)}' /etc/redhat-release
-
-    [ -f /etc/os-release ] && awk -F'[= "]' '/PRETTY_NAME/{print $3,$4,$5}' /etc/os-release && return
-    # cat /etc/os-release | awk -F'[= "]' '/PRETTY_NAME/{print $3,$4,$5}' /etc/os-release
-
-    [ -f /etc/lsb-release ] && awk -F'[="]+' '/DESCRIPTION/{print $2}' /etc/lsb-release && return
-    # cat /etc/lsb-release | awk -F'[="]+' '/DESCRIPTION/{print $2}' /etc/lsb-release
+# 获取操作系统信息
+GetOSRelease() {
+#    [ -f /etc/redhat-release ] && awk '{print ($1,$3~/^[0-9]/?$3:$4)}' /etc/redhat-release && return
+#    [ -f /etc/os-release ] && awk -F'[= "]' '/PRETTY_NAME/{print $3,$4,$5}' /etc/os-release && return
+#    [ -f /etc/lsb-release ] && awk -F'[="]+' '/DESCRIPTION/{print $2}' /etc/lsb-release && return
+    if [ -f /etc/redhat-release ]; then
+        os_release=$(cat /etc/redhat-release | awk '{print ($1,$3~/^[0-9]/?$3:$4)}' /etc/redhat-release)
+    elif [ -f /etc/os-release ]; then
+        os_release=$(cat /etc/os-release | awk -F'[= "]' '/PRETTY_NAME/{print $3,$4,$5}' /etc/os-release)
+    elif [ -f /etc/lsb-release ]; then
+        os_release=$(cat /etc/lsb-release | awk -F'[="]+' '/DESCRIPTION/{print $2}' /etc/lsb-release)
+    else
+        os_release="unknown"
+    fi
 }
 
 # 将硬盘空间单位转换为 G, 并累加起来
@@ -560,12 +568,16 @@ fioTest() {
             echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
 
             while [ $DISK_COUNT -lt $DISK_RESULTS_NUM ]; do
-                if [ $DISK_COUNT -gt 0 ]; then printf "% -10s | %-20s | %-20s\n"; fi
+                if [ $DISK_COUNT -gt 0 ]; then
+                    printf " %-10s | %-20s | %-20s\n";
+                fi
+
                 printf " %-10s | %-11s %8s | %-11s %8s\n" "Block Size" "${BLOCK_SIZES[DISK_COUNT]}" "(IOPS)" "${BLOCK_SIZES[DISK_COUNT + 1]}" "(IOPS)"
                 printf " %-10s | %-11s %8s | %-11s %8s\n" "  ------" "---" "---- " "----" "---- "
                 printf " %-10s | %-11s %8s | %-11s %8s\n" "Read" "${DISK_RESULTS[DISK_COUNT * 6 + 1]}" "(${DISK_RESULTS[DISK_COUNT * 6 + 4]})" "${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 1]}" "(${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 4]})"
                 printf " %-10s | %-11s %8s | %-11s %8s\n" "Write" "${DISK_RESULTS[DISK_COUNT * 6 + 2]}" "(${DISK_RESULTS[DISK_COUNT * 6 + 5]})" "${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 2]}" "(${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 5]})"
                 printf " %-10s | %-11s %8s | %-11s %8s\n" "Total" "${DISK_RESULTS[DISK_COUNT * 6]}" "(${DISK_RESULTS[DISK_COUNT * 6 + 3]})" "${DISK_RESULTS[(DISK_COUNT + 1) * 6]}" "(${DISK_RESULTS[(DISK_COUNT + 1) * 6 + 3]})"
+
                 DISK_COUNT=$(expr $DISK_COUNT + 2)
             done
         fi
@@ -577,6 +589,8 @@ fioTest() {
 #          script is being run from using fio random read/write speed tests.
 # Parameters:
 #          - (none)
+
+# 测试
 disk_test() {
     if [[ "$os_arch" = "aarch64" || "$os_arch" = "arm" ]]; then
         FIO_SIZE=512M
@@ -585,16 +599,17 @@ disk_test() {
     fi
 
     # run a quick test to generate the fio test file to be used by the actual tests
-    echo -en "Generating fio test file..."
+    echo -en "${Msg_Info}Generating fio test file..."
     $FIO_CMD --name=setup --ioengine=libaio --rw=read --bs=64k --iodepth=64 --numjobs=2 --size=$FIO_SIZE --runtime=1 --gtod_reduce=1 --filename=$DISK_PATH/test.fio --direct=1 --minimal &>/dev/null
-    echo -en "\r\033[0K"
+    # echo -en "\r\033[0K"
+    # echo -en "\r${Msg_Info}Done"
 
     # get array of block sizes to evaluate
     BLOCK_SIZES=("$@")
 
     for BS in "${BLOCK_SIZES[@]}"; do
         # run rand read/write mixed fio test with block size = $BS
-        echo -en "${Msg_Info}Running fio random mixed R+W disk test with $BS block size..."
+        echo -en "\r${Msg_Info}Running fio random mixed R+W disk test with $BS block size..."
         DISK_TEST=$(timeout 35 $FIO_CMD --name=rand_rw_$BS --ioengine=libaio --rw=randrw --rwmixread=50 --bs=$BS --iodepth=64 --numjobs=2 --size=$FIO_SIZE --runtime=30 --gtod_reduce=1 --direct=1 --filename=$DISK_PATH/test.fio --group_reporting --minimal 2>/dev/null | grep rand_rw_$BS)
         DISK_IOPS_R=$(echo $DISK_TEST | awk -F';' '{print $8}')
         DISK_IOPS_W=$(echo $DISK_TEST | awk -F';' '{print $49}')
@@ -857,8 +872,11 @@ SystemInfo_GetSystemBit() {
 }
 Check_JSONQuery() {
     if [ ! -f "/usr/bin/jq" ]; then
+        # 获取系统发行版本
         SystemInfo_GetOSRelease
+        # 获取系统位数
         SystemInfo_GetSystemBit
+
         if [ "${LBench_Result_SystemBit_Short}" = "64" ]; then
             local DownloadSrc="https://raindrop.ilemonrain.com/LemonBench/include/JSONQuery/jq-amd64.tar.gz"
             # local DownloadSrc="https://raw.githubusercontent.com/LemonBench/LemonBench/master/Resources/JSONQuery/jq-amd64.tar.gz"
@@ -875,7 +893,7 @@ Check_JSONQuery() {
 
         if [ "${Var_OSRelease}" = "centos" ] || [ "${Var_OSRelease}" = "rhel" ]; then
             echo -e "${Msg_Warning}JSON Query Module not found, Installing ..."
-            echo -e "${Msg_Info}Installing Dependency ..."
+            echo -e "${Msg_Info}Installing Dependencies ..."
 
             echo -e "${Msg_Info}yum install -y epel-release"
             yum install -y epel-release
@@ -885,7 +903,7 @@ Check_JSONQuery() {
 
         elif [ "${Var_OSRelease}" = "ubuntu" ] || [ "${Var_OSRelease}" = "debian" ]; then
             echo -e "${Msg_Warning}JSON Query Module not found, Installing ..."
-            echo -e "${Msg_Info}Installing Dependency ..."
+            echo -e "${Msg_Info}Installing Dependencies ..."
 
             echo -e "${Msg_Info}apt-get update"
             apt-get update
@@ -895,14 +913,14 @@ Check_JSONQuery() {
 
         elif [ "${Var_OSRelease}" = "fedora" ]; then
             echo -e "${Msg_Warning}JSON Query Module not found, Installing ..."
-            echo -e "${Msg_Info}Installing Dependency ..."
+            echo -e "${Msg_Info}Installing Dependencies ..."
 
             echo -e "${Msg_Info}dnf install -y jq"
             dnf install -y jq
 
         elif [ "${Var_OSRelease}" = "alpinelinux" ]; then
             echo -e "${Msg_Warning}JSON Query Module not found, Installing ..."
-            echo -e "${Msg_Info}Installing Dependency ..."
+            echo -e "${Msg_Info}Installing Dependencies ..."
 
             echo -e "${Msg_Info}apk update"
             apk update
@@ -912,7 +930,7 @@ Check_JSONQuery() {
 
         else
             echo -e "${Msg_Warning}JSON Query Module not found, Installing ..."
-            echo -e "${Msg_Info}Installing Dependency ..."
+            echo -e "${Msg_Info}Installing Dependencies ..."
 
             echo -e "${Msg_Info}apk update"
             apk update
@@ -939,16 +957,18 @@ Check_JSONQuery() {
     fi
 }
 
+InstallDependencies() {
+    # 检查 JSONQuery 组件
+    Check_JSONQuery
+}
+
 # 主程序
 main() {
     # 清屏
     clear
 
-    # 检查 JSONQuery 组件
-    Check_JSONQuery
-
-    # 清屏
-    clear
+    # 安装依赖
+    InstallDependencies
 
     # 输出脚本基本信息
     About
