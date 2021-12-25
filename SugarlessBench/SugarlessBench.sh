@@ -28,9 +28,10 @@ Msg_Success="${Green}[Success] ${Suffix}"
 Msg_Fail="${Red}[Failed] ${Suffix}"
 
 # 全局变量
-Var_OSRelease=""  # centos / debian / ubuntu ...
-Var_OSVersion=""  # 5 6 7 8 ... 主版本号
-Var_OSArch=""     # 32 / 64 位
+GlobalVar_TestMode=""   # 测试模式
+Var_OSRelease=""        # centos / debian / ubuntu ...
+Var_OSVersion=""        # 5 6 7 8 ... 主版本号
+Var_OSArch=""           # 32 / 64 位
 
 # 关于此脚本
 About() {
@@ -436,6 +437,7 @@ ShowNetworkInfo() {
     fi
 
     echo -e ""
+    echo -e ""
 }
 
 fioTest() {
@@ -495,7 +497,8 @@ fioTest() {
             fi
         fi
 
-        echo -en "\nPreparing system for disk tests..."
+        # echo -en "\nPreparing system for disk tests..."
+        echo -en "${Msg_Info}Preparing system for disk tests..."
 
         # create temp directory to store disk write/read test files
         DISK_PATH=$ROOT_PATH/disk
@@ -567,7 +570,7 @@ fioTest() {
             DISK_COUNT=0
 
             # print disk speed test results
-            echo -e "${SkyBlue} fio Disk Speed Tests (Mixed R/W 50/50): ${Suffix}"
+            echo -e "${SkyBlue} Disk Performance Test (fio Mixed R/W 50/50): ${Suffix}"
             echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
 
             while [ $DISK_COUNT -lt $DISK_RESULTS_NUM ]; do
@@ -965,6 +968,177 @@ InstallDependencies() {
     Check_JSONQuery
 }
 
+# CPU 性能测试
+CPUBenchmarkTest() {
+    echo -e "${SkyBlue} CPU Performance Test (Standard Mode, 3-Pass @ 15sec) ${Suffix}"
+    echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
+    
+    # local CPUInfo="$(cat /proc/cpuinfo)"
+    local CPUInfo="cat /proc/cpuinfo"
+
+    local CPUThreadNumber="$($CPUInfo | awk -F ': ' '/cores/{print $2}' | wc -l)"
+    local CPUProcessorNumber="$($CPUInfo | awk -F ': ' '/processor/{print $2}' | wc -l)"
+    # echo -e "CPUThreadNumber: ${CPUThreadNumber}"
+    # echo -e "CPUProcessorNumber: ${CPUProcessorNumber}"
+
+    # 单线程
+    Run_SysBench_CPU "1" "15" "3" "1 Thread Test"
+
+    # 多线程
+    if [ "${CPUThreadNumber}" -ge "2" ]; then
+        Run_SysBench_CPU "${CPUThreadNumber}" "15" "3" "${CPUThreadNumber} Threads Test"
+    elif [ "${CPUProcessorNumber}" -ge "2" ]; then
+        Run_SysBench_CPU "${CPUProcessorNumber}" "15" "3" "${CPUProcessorNumber} Threads Test"
+    fi
+
+    echo -e ""
+    echo -e ""
+}
+
+Run_SysBench_CPU() {
+    # 调用方式: Run_SysBench_CPU "线程数" "测试时长(s)" "测试遍数" "说明"
+    # 变量初始化
+
+    # 测试次数
+    maxtestcount="$3"
+
+    # 本轮为第几次测试
+    local count="1"
+    # 本轮测试分数
+    local TestScore="0"
+    # 测试分数总和
+    local TotalScore="0"
+
+    # 运行测试
+    while [ $count -le $maxtestcount ]; do
+        # echo -e "\r ${Yellow}$4: ${Suffix} $count/$maxtestcount \c"
+        echo -en "\r${Msg_Info}$4: $count/$maxtestcount ..."
+        local TestResult="$(sysbench --test=cpu --num-threads=$1 --cpu-max-prime=10000 --max-requests=1000000 --max-time=$2 run 2>&1)"
+        local TestScore="$(echo ${TestResult} | grep -oE "events per second: [0-9]+" | grep -oE "[0-9]+")"
+        local TotalScore="$(echo "${TotalScore} ${TestScore}" | awk '{printf "%d",$1+$2}')"
+        let count=count+1
+        local TestResult=""
+        local TestScore="0"
+    done
+
+    # 输出分数
+    local ResultScore="$(echo "${TotalScore} ${maxtestcount}" | awk '{printf "%d",$1/$2}')"
+    # echo -e "\r ${Yellow}$4: ${Suffix}${SkyBlue}${ResultScore}${Suffix} ${Yellow}Scores${Suffix}"
+
+    if [ "$1" = "1" ]; then
+        echo -e "\r $4           : ${Yellow}${ResultScore}${Suffix} ${SkyBlue}Scores${Suffix}"
+    elif [ "$1" -ge "11" ]; then
+        echo -e "\r $4         : ${Yellow}${ResultScore}${Suffix} ${SkyBlue}Scores${Suffix}"
+    fi
+}
+
+# 内存性能测试
+MemoryBenchmarkTest() {
+    echo -e "${SkyBlue} Memory Performance Test (Standard Mode, 3-Pass @ 15sec) ${Suffix}"
+    echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
+
+    # 读
+    Run_SysBench_Memory "1" "15" "3" "read" "seq" "1 Thread - Read Test "
+    # 写
+    Run_SysBench_Memory "1" "15" "3" "write" "seq" "1 Thread - Write Test"
+    
+    echo -e ""
+    echo -e ""
+}
+
+Run_SysBench_Memory() {
+    # 调用方式: Run_SysBench_Memory "线程数" "测试时长(s)" "测试遍数" "测试模式(读/写)" "读写方式(顺序/随机)" "说明"
+    # 变量初始化
+    
+    # 测试遍数
+    maxtestcount="$3"
+    local count="1"
+    local TestScore="0.00"
+    local TestSpeed="0.00"
+    local TotalScore="0.00"
+    local TotalSpeed="0.00"
+
+    # 使用单线程或多线程测试
+    if [ "$1" -ge "2" ]; then
+        # 多线程
+        MultiThread_Flag="1"
+    else
+        # 单线程
+        MultiThread_Flag="0"
+    fi
+
+    # 运行测试
+    while [ $count -le $maxtestcount ]; do
+        if [ "$1" -ge "2" ] && [ "$4" = "write" ]; then
+            # echo -e "\r ${Yellow}$6:${Suffix}\t$count/$maxtestcount \c"
+            echo -en "\r${Msg_Info}$6  : $count/$maxtestcount ..."
+        else
+            # echo -e "\r ${Yellow}$6:${Suffix}\t\t$count/$maxtestcount \c"
+            echo -en "\r${Msg_Info}$6  : $count/$maxtestcount ..."
+        fi
+
+        local TestResult="$(sysbench --test=memory --num-threads=$1 --memory-block-size=1M --memory-total-size=102400G --memory-oper=$4 --max-time=$2 --memory-access-mode=$5 run 2>&1)"
+        # 判断是MB还是MiB
+        echo "${TestResult}" | grep -oE "MiB" >/dev/null 2>&1
+        if [ $? -eq 0 ]; then
+            local MiB_Flag="1"
+        else
+            local MiB_Flag="0"
+        fi
+        local TestScore="$(echo "${TestResult}" | grep -oE "[0-9]{1,}.[0-9]{1,2} ops\/sec|[0-9]{1,}.[0-9]{1,2} per second" | grep -oE "[0-9]{1,}.[0-9]{1,2}")"
+        local TestSpeed="$(echo "${TestResult}" | grep -oE "[0-9]{1,}.[0-9]{1,2} MB\/sec|[0-9]{1,}.[0-9]{1,2} MiB\/sec" | grep -oE "[0-9]{1,}.[0-9]{1,2}")"
+        local TotalScore="$(echo "${TotalScore} ${TestScore}" | awk '{printf "%.2f",$1+$2}')"
+        local TotalSpeed="$(echo "${TotalSpeed} ${TestSpeed}" | awk '{printf "%.2f",$1+$2}')"
+        let count=count+1
+        local TestResult=""
+        local TestScore="0.00"
+        local TestSpeed="0.00"
+    done
+
+    ResultScore="$(echo "${TotalScore} ${maxtestcount} 1000" | awk '{printf "%.2f",$1/$2/$3}')"
+    if [ "${MiB_Flag}" = "1" ]; then
+        # MiB to MB
+        ResultSpeed="$(echo "${TotalSpeed} ${maxtestcount} 1048576‬ 1000000" | awk '{printf "%.2f",$1/$2/$3*$4}')"
+    else
+        # 直接输出
+        ResultSpeed="$(echo "${TotalSpeed} ${maxtestcount}" | awk '{printf "%.2f",$1/$2}')"
+    fi
+
+    # 1线程的测试结果写入临时变量，方便与后续的多线程变量做对比
+    if [ "$1" = "1" ] && [ "$4" = "read" ]; then
+        LBench_Result_MemoryReadSpeedSingle="${ResultSpeed}"
+    elif [ "$1" = "1" ] &&[ "$4" = "write" ]; then
+        LBench_Result_MemoryWriteSpeedSingle="${ResultSpeed}"
+    fi
+
+    if [ "${MultiThread_Flag}" = "1" ]; then
+        # 如果是多线程测试，输出与1线程测试对比的倍率
+        if [ "$1" -ge "2" ] && [ "$4" = "read" ]; then
+            LBench_Result_MemoryReadSpeedMulti="${ResultSpeed}"
+            local readmultiple="$(echo "${LBench_Result_MemoryReadSpeedMulti} ${LBench_Result_MemoryReadSpeedSingle}" | awk '{printf "%.2f", $1/$2}')"
+            echo -e "\r ${Yellow}$6:${Suffix}\t\t${SkyBlue}${LBench_Result_MemoryReadSpeedMulti}${Suffix} ${Yellow}MB/s${Suffix} (${readmultiple} x)"
+        elif [ "$1" -ge "2" ] && [ "$4" = "write" ]; then
+            LBench_Result_MemoryWriteSpeedMulti="${ResultSpeed}"
+            local writemultiple="$(echo "${LBench_Result_MemoryWriteSpeedMulti} ${LBench_Result_MemoryWriteSpeedSingle}" | awk '{printf "%.2f", $1/$2}')"
+            echo -e "\r ${Yellow}$6:${Suffix}\t\t${SkyBlue}${LBench_Result_MemoryWriteSpeedMulti}${Suffix} ${Yellow}MB/s${Suffix} (${writemultiple} x)"
+        fi
+    else
+        # 单线程
+        if [ "$4" = "read" ]; then
+            echo -e "\r $6   : ${Yellow}${ResultSpeed}${Suffix} ${SkyBlue}MB/s${Suffix}"
+        elif [ "$4" = "write" ]; then
+            echo -e "\r $6   : ${Yellow}${ResultSpeed}${Suffix} ${SkyBlue}MB/s${Suffix}"
+        fi
+    fi
+
+    # Fix
+    # if [ "$1" -ge "2" ] && [ "$4" = "write" ]; then
+    #     echo -e " $6:\t${ResultSpeed} MB/s"
+    # else
+    #     echo -e " $6:\t\t${ResultSpeed} MB/s"
+    # fi
+}
+
 # 主程序
 main() {
     # 清屏
@@ -988,12 +1162,53 @@ main() {
     GetNetworkInfo
     # 输出网络信息
     ShowNetworkInfo
+    
+    # CPU 性能测试
+    CPUBenchmarkTest
+
+    # RAM 性能测试
+    MemoryBenchmarkTest
 
     # FIO test
     fioTest
 
     Complete
 }
+
+# 检测传入参数
+while [[ $# -ge 1 ]]; do
+    case $1 in
+    # 快速测试
+    fast | -fast | --fast)
+        shift
+        if [ "${GlobalVar_TestMode}" != "" ]; then
+            echo -e "\n${Msg_Error}Multiple test modes exist, please check the parameters!"
+            exit 1
+        else
+            GlobalVar_TestMode="fast"
+        fi
+
+        echo -e "fast mode"
+        ;;
+    # 完整测试
+    full | -full | --full)
+        shift
+        if [ "${GlobalVar_TestMode}" != "" ]; then
+            echo -e "\n${Msg_Error}Multiple test modes exist, please check the parameters!"
+            exit 1
+        else
+            GlobalVar_TestMode="full"
+        fi
+        echo -e "full mode"
+        ;;
+    # 无效参数处理
+    *)
+        # 无效参数处理
+        [[ "$1" != 'error' ]] && echo -ne "\n${Msg_Error}Invalid Parameters: \"$1\"\n"
+        exit 1
+        ;;
+    esac
+done
 
 # 运行主程序
 main
