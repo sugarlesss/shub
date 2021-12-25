@@ -570,7 +570,7 @@ fioTest() {
             DISK_COUNT=0
 
             # print disk speed test results
-            echo -e "${SkyBlue} Disk Performance Test (fio Mixed R/W 50/50): ${Suffix}"
+            echo -e "${SkyBlue} Disk Performance Test (fio Mixed R/W 50/50)${Suffix}"
             echo -e "${Green} -------------------------------------------------------------- ${Suffix}"
 
             while [ $DISK_COUNT -lt $DISK_RESULTS_NUM ]; do

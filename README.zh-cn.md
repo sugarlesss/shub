@@ -35,48 +35,57 @@ SugarlessBench 目前涵盖了如下测试：
 ```
  CPU / RAM / Disk / OS / TCP 
  -------------------------------------------------------------- 
- CPU Model               : AMD EPYC 7402P 24-Core Processor
- CPU Cores               : 1 Cores 2794.750 MHz x64
- CPU Cache               : 512 KB 
+ CPU Model               : Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.70GHz
+ CPU Cores               : 2 Cores 2699.998 MHz x64
+ CPU Cache               : 30720 KB 
  CPU AES-NI              : ✔ Enabled
- CPU VM-x/AMD-V          : ✔ Enabled
+ CPU VM-x/AMD-V          : ❌ Disabled
 
- RAM                     : 407 MB / 989 MB (132 MB Buff)
- SWAP                    : 29 MB / 1024 MB
+ RAM                     : 77 MB / 984 MB (89 MB Buff)
+ SWAP                    : 0 MB / 1022 MB
 
- Disk                    : 5.9 GB / 9.9 GB 
+ Disk                    : 1.7 GB / 34.0 GB 
 
  OS Release              : CentOS 7.9.2009
  OS Architecture         : x64
  OS virtualization       : KVM
- OS Kernel               : 4.9.215-36.el7.x86_64
+ OS Kernel               : 4.14.129-bbrplus
 
- TCP Congestion Control  : bbr
+ TCP Congestion Control  : bbrplus
 
 
  IPv4 / IPv6 / Region / ASN 
  -------------------------------------------------------------- 
- IPv4 - IP Address       : [US] 192.168.3.10
- IPv4 - ASN Info         : AS1234 (xxxxxxxxxxx)
+ IPv4 - IP Address       : [US] 192.168.1.1
+ IPv4 - ASN Info         : AS35916 (MULTA-ASN1 - MULTACOM CORPORATION, US)
  IPv4 - Region           : United States California Los Angeles
- IPv6 - IP Address       : [US] 1234:1234:1234:123::
- IPv6 - ASN Info         : AS1234 (xxxxxxxxxxx)
- IPv6 - Region           : United States United States 
 
 
- fio Disk Speed Tests (Mixed R/W 50/50): 
+ CPU Performance Test (Standard Mode, 3-Pass @ 15sec) 
+ -------------------------------------------------------------- 
+ 1 Thread Test           : 769 Scores
+ 2 Threads Test           : 1538 Scores
+
+
+ Memory Performance Test (Standard Mode, 3-Pass @ 15sec) 
+ -------------------------------------------------------------- 
+ 1 Thread - Read Test    : 15811.04 MB/s
+ 1 Thread - Write Test   : 12623.19 MB/s
+
+
+ Disk Performance Test (fio Mixed R/W 50/50): 
  -------------------------------------------------------------- 
  Block Size | 4k            (IOPS) | 64k           (IOPS)
    ------   | ---            ----  | ----           ---- 
- Read       | 10.97 MB/s    (2.7k) | 162.14 MB/s   (2.5k)
- Write      | 10.99 MB/s    (2.7k) | 162.99 MB/s   (2.5k)
- Total      | 21.97 MB/s    (5.4k) | 325.13 MB/s   (5.0k)
+ Read       | 11.57 MB/s    (2.8k) | 151.52 MB/s   (2.3k)
+ Write      | 11.56 MB/s    (2.8k) | 152.32 MB/s   (2.3k)
+ Total      | 23.14 MB/s    (5.7k) | 303.84 MB/s   (4.7k)
             |                      |                     
  Block Size | 512k          (IOPS) | 1m            (IOPS)
    ------   | ---            ----  | ----           ---- 
- Read       | 640.00 MB/s   (1.2k) | 789.10 MB/s    (770)
- Write      | 674.00 MB/s   (1.3k) | 841.65 MB/s    (821)
- Total      | 1.31 GB/s     (2.5k) | 1.63 GB/s     (1.5k)
+ Read       | 155.82 MB/s    (304) | 174.88 MB/s    (170)
+ Write      | 164.10 MB/s    (320) | 186.53 MB/s    (182)
+ Total      | 319.93 MB/s    (624) | 361.42 MB/s    (352)
 ```
 
 
