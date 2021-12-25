@@ -963,9 +963,115 @@ Check_JSONQuery() {
     fi
 }
 
+# =============== 检查 SysBench 组件 ===============
+Check_SysBench() {
+    if [ ! -f "/usr/bin/sysbench" ] && [ ! -f "/usr/local/bin/sysbench" ]; then
+        SystemInfo_GetOSRelease
+        SystemInfo_GetSystemBit
+        if [ "${Var_OSRelease}" = "centos" ] || [ "${Var_OSRelease}" = "rhel" ]; then
+            echo -e "${Msg_Warning}Sysbench Module not found, installing ..."
+            yum -y install epel-release
+            yum -y install sysbench
+        elif [ "${Var_OSRelease}" = "ubuntu" ]; then
+            echo -e "${Msg_Warning}Sysbench Module not found, installing ..."
+            apt-get install -y sysbench
+        elif [ "${Var_OSRelease}" = "debian" ]; then
+            echo -e "${Msg_Warning}Sysbench Module not found, installing ..."
+            local mirrorbase="https://raindrop.ilemonrain.com/LemonBench"
+            local componentname="Sysbench"
+            local version="1.0.19-1"
+            local arch="debian"
+            local codename="${Var_OSReleaseVersion_Codename}"
+            local bit="${LBench_Result_SystemBit_Full}"
+            local filenamebase="sysbench"
+            local filename="${filenamebase}_${version}_${bit}.deb"
+            local downurl="${mirrorbase}/include/${componentname}/${version}/${arch}/${codename}/${filename}"
+            mkdir -p ${ROOT_PATH}/download/
+            pushd ${ROOT_PATH}/download/ >/dev/null
+            wget -U "${UA_LemonBench}" -O ${filenamebase}_${version}_${bit}.deb ${downurl}
+            dpkg -i ./${filename}
+            apt-get install -f -y
+            popd
+            if [ ! -f "/usr/bin/sysbench" ] && [ ! -f "/usr/local/bin/sysbench" ]; then
+                echo -e "${Msg_Warning}Sysbench Module Install Failed!"
+            fi
+        elif [ "${Var_OSRelease}" = "fedora" ]; then
+            echo -e "${Msg_Warning}Sysbench Module not found, installing ..."
+            dnf -y install sysbench
+        elif [ "${Var_OSRelease}" = "alpinelinux" ]; then
+            echo -e "${Msg_Warning}Sysbench Module not found, installing ..."
+            echo -e "${Msg_Warning}SysBench Current not support Alpine Linux, Skipping..."
+            Var_Skip_SysBench="1"
+        fi
+    fi
+    # 垂死挣扎 (尝试编译安装)
+    if [ ! -f "/usr/bin/sysbench" ] && [ ! -f "/usr/local/bin/sysbench" ]; then
+        echo -e "${Msg_Warning}Sysbench Module install Failure, trying compile modules ..."
+        Check_Sysbench_InstantBuild
+    fi
+    # 最终检测
+    if [ ! -f "/usr/bin/sysbench" ] && [ ! -f "/usr/local/bin/sysbench" ]; then
+        echo -e "${Msg_Error}SysBench Moudle install Failure! Try Restart Bench or Manually install it! (/usr/bin/sysbench)"
+        exit 1
+    fi
+}
+
+Check_Sysbench_InstantBuild() {
+    SystemInfo_GetOSRelease
+    SystemInfo_GetCPUInfo
+    if [ "${Var_OSRelease}" = "centos" ] || [ "${Var_OSRelease}" = "rhel" ]; then
+        echo -e "${Msg_Info}Release Detected: ${Var_OSRelease}"
+        echo -e "${Msg_Info}Preparing compile enviorment ..."
+        yum install -y epel-release
+        yum install -y wget curl make gcc gcc-c++ make automake libtool pkgconfig libaio-devel
+        echo -e "${Msg_Info}Release Detected: ${Var_OSRelease}"
+        echo -e "${Msg_Info}Downloading Source code (Version 1.0.17)..."
+        mkdir -p /tmp/_LBench/src/
+        wget -U "${UA_LemonBench}" -O /tmp/_LBench/src/sysbench.zip https://github.com/akopytov/sysbench/archive/1.0.17.zip
+        echo -e "${Msg_Info}Compiling Sysbench Module ..."
+        cd /tmp/_LBench/src/
+        unzip sysbench.zip && cd sysbench-1.0.17
+        ./autogen.sh && ./configure --without-mysql && make -j8 && make install
+        echo -e "${Msg_Info}Cleaning up ..."
+        cd /tmp && rm -rf /tmp/_LBench/src/sysbench*
+    elif [ "${Var_OSRelease}" = "ubuntu" ] || [ "${Var_OSRelease}" = "debian" ]; then
+        echo -e "${Msg_Info}Release Detected: ${Var_OSRelease}"
+        echo -e "${Msg_Info}Preparing compile enviorment ..."
+        apt-get update
+        apt -y install --no-install-recommends curl wget make automake libtool pkg-config libaio-dev unzip
+        echo -e "${Msg_Info}Downloading Source code (Version 1.0.17)..."
+        mkdir -p /tmp/_LBench/src/
+        wget -U "${UA_LemonBench}" -O /tmp/_LBench/src/sysbench.zip https://github.com/akopytov/sysbench/archive/1.0.17.zip
+        echo -e "${Msg_Info}Compiling Sysbench Module ..."
+        cd /tmp/_LBench/src/
+        unzip sysbench.zip && cd sysbench-1.0.17
+        ./autogen.sh && ./configure --without-mysql && make -j8 && make install
+        echo -e "${Msg_Info}Cleaning up ..."
+        cd /tmp && rm -rf /tmp/_LBench/src/sysbench*
+    elif [ "${Var_OSRelease}" = "fedora" ]; then
+        echo -e "${Msg_Info}Release Detected: ${Var_OSRelease}"
+        echo -e "${Msg_Info}Preparing compile enviorment ..."
+        dnf install -y wget curl gcc gcc-c++ make automake libtool pkgconfig libaio-devel
+        echo -e "${Msg_Info}Downloading Source code (Version 1.0.17)..."
+        mkdir -p /tmp/_LBench/src/
+        wget -U "${UA_LemonBench}" -O /tmp/_LBench/src/sysbench.zip https://github.com/akopytov/sysbench/archive/1.0.17.zip
+        echo -e "${Msg_Info}Compiling Sysbench Module ..."
+        cd /tmp/_LBench/src/
+        unzip sysbench.zip && cd sysbench-1.0.17
+        ./autogen.sh && ./configure --without-mysql && make -j8 && make install
+        echo -e "${Msg_Info}Cleaning up ..."
+        cd /tmp && rm -rf /tmp/_LBench/src/sysbench*
+    else
+        echo -e "${Msg_Error}Cannot compile on current enviorment！ (Only Support CentOS/Debian/Ubuntu/Fedora) "
+    fi
+}
+
 InstallDependencies() {
     # 检查 JSONQuery 组件
     Check_JSONQuery
+    
+    # 检查 SysBench 组件
+    Check_SysBench
 }
 
 # CPU 性能测试
