@@ -1025,9 +1025,9 @@ Run_SysBench_CPU() {
     local ResultScore="$(echo "${TotalScore} ${maxtestcount}" | awk '{printf "%d",$1/$2}')"
     # echo -e "\r ${Yellow}$4: ${Suffix}${SkyBlue}${ResultScore}${Suffix} ${Yellow}Scores${Suffix}"
 
-    if [ "$1" = "1" ]; then
+    if [ "$1" -lt "10" ]; then
         echo -e "\r $4           : ${Yellow}${ResultScore}${Suffix} ${SkyBlue}Scores${Suffix}"
-    elif [ "$1" -ge "11" ]; then
+    elif [ "$1" -ge "10" ]; then
         echo -e "\r $4         : ${Yellow}${ResultScore}${Suffix} ${SkyBlue}Scores${Suffix}"
     fi
 }
