@@ -280,7 +280,7 @@ GetOSRelease() {
 calc_disk() {
     local total_size=0
     local array=$@
-    for size in "${array[@]}"; do
+    for size in ${array[@]}; do
         [ "${size}" == "0" ] && size_tmp=0 || size_tmp=$(echo ${size:0:${#size}-1})
         [ "$(echo ${size:(-1)})" == "K" ] && size=0
         [ "$(echo ${size:(-1)})" == "M" ] && size=$(awk 'BEGIN{printf "%.1f", '$size_tmp' / 1024}')
